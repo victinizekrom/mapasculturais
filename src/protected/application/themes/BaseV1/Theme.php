@@ -1237,6 +1237,22 @@ class Theme extends MapasCulturais\Theme {
             $this->part('event-attendance', ['entity' => $this->data->entity]);
         });
 
+        $app->hook('template(agent.<<create>>.type):before', function($entity, &$entityTypeClass) use ($app) {
+            $user = $entity->user;
+            $totalAgentsByUser = $app->repo('Agent')->countByUser($user);
+            if ($totalAgentsByUser == 0) {
+                $entityTypeClass = '';
+            }
+        });
+    
+        $app->hook('template(agent.<<edit>>.type):before', function($entity, &$entityTypeClass) use ($app) {
+            $user = $entity->user;
+            $totalAgentsByUser = $app->repo('Agent')->countByUser($user);
+            if ($totalAgentsByUser == 1) {
+                $entityTypeClass = '';
+            }
+        });
+
     }
 
 

@@ -42,6 +42,7 @@ class Agent extends \MapasCulturais\Entity
 
     const STATUS_RELATED = -1;
     const STATUS_INVITED = -2;
+    const TYPE_INDIVIDUAL = 1;
 
     protected function validateLocation(){
         if($this->location instanceof \MapasCulturais\Types\GeoPoint && $this->location != '(0,0)'){
@@ -277,6 +278,27 @@ class Agent extends \MapasCulturais\Entity
             return \MapasCulturais\i::__('Agentes');
         else
             return \MapasCulturais\i::__('Agente');
+    }
+
+    /**
+     * Validates the entity properties and returns the errors messages.
+     *
+     * @see \MapasCulturais\Traits\Metadata::getMetadataValidationErrors() Metadata Validation Errors
+     *
+     * @return array
+     */
+    public function getValidationErrors(){
+        $errors = parent::getValidationErrors();
+              
+        if ($this->_type !== self::TYPE_INDIVIDUAL && empty($errors['type'])) {
+            $totalAgentsByUser = App::i()->repo('Agent')->countByUser($this->user);
+            $action = (empty($this->id)) ? 'new' : 'edit' ;
+            if ($totalAgentsByUser == 0 &&  $action == 'new' || $totalAgentsByUser == 1 && $action == 'edit') {
+                $errors['type'] = [\MapasCulturais\i::__('Tipo inválido. Este agente deve ser obrigatoriamente do tipo Individual')];
+            }   
+        }
+
+        return $errors;
     }
 
     static function getValidations() {
