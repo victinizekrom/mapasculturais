@@ -1,5 +1,6 @@
 <?php
 namespace MapasCulturais\Repositories;
+use \MapasCulturais\App;
 use MapasCulturais\Traits;
 
 class Agent extends \MapasCulturais\Repository{
@@ -19,5 +20,32 @@ class Agent extends \MapasCulturais\Repository{
     
             return $num;
         }
-}
 
+        /**
+         * Return agents by metadata fields
+         * @param string $key
+         * @param string $value
+         * @return MapasCulturais\Entities\Agent
+         */
+        public function findByMetadata($key, $value) {
+            $entityClass = $this->getClassName();
+            $app = App::i();
+    
+            $dql = "SELECT m,a
+                    FROM {$entityClass}Meta m
+                    JOIN m.owner a
+                    WHERE m.key = :key AND m.value = :value ";
+    
+            $query = $app->em->createQuery($dql);
+    
+            $query->setParameter('key', $key);
+            $query->setParameter('value', $value);
+    
+            $entityList = $query->getResult();
+            $list = [];
+            foreach($entityList as $item) {
+                $list[] = $item->owner;
+            }
+            return $list;
+        }        
+}
