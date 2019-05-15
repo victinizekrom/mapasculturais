@@ -39,10 +39,7 @@ return [
                 return !$this->publicLocation;
             },
             'label' => \MapasCulturais\i::__('Endereço'),
-            'type' => 'text',
-            'validations' => [
-                'required' => \MapasCulturais\i::__('O campo Endereço deve ser preenchido.'),
-            ]
+            'type' => 'text'
         ],                    
         'En_CEP' => [
             'label' => \MapasCulturais\i::__('CEP'),
@@ -82,12 +79,18 @@ return [
             'private' => function(){
                 return !$this->publicLocation;
             },
+            'validations' => [
+                'required' => \MapasCulturais\i::__('O campo Bairro deve ser preenchido.'),
+            ]
         ],
         'En_Municipio' => [
             'label' => \MapasCulturais\i::__('Município'),
             'private' => function(){
                 return !$this->publicLocation;
             },
+            'validations' => [
+                'required' => \MapasCulturais\i::__('O campo Município deve ser preenchido.'),
+            ]
         ],
         'En_Estado' => [
             'label' => \MapasCulturais\i::__('Estado'),
@@ -124,15 +127,10 @@ return [
                 'SP'=>'São Paulo',
                 'SE'=>'Sergipe',
                 'TO'=>'Tocantins',
+            ],
+            'validations' => [
+                'required' => \MapasCulturais\i::__('O campo Estado deve ser preenchido.'),
             ]
-        ],
-        'En_CE_Municipio' => [
-            'label' => \MapasCulturais\i::__('Município'),
-            'private' => function(){
-                return !$this->publicLocation;
-            },
-            'type' => 'select',
-            'options' => []
         ],
         'localizacao' => [
             'label' => \MapasCulturais\i::__('Localização'),

@@ -1118,6 +1118,7 @@ $(function(){
     var cities = [];
 
     function loadCities(ufCode){
+            if (uf == null || uf == undefined) return;
             $.getJSON( "/api/city/list?stateCode="+ufCode, function( data ) {
                 if (data !== null) {
                     var config = {
@@ -1147,13 +1148,15 @@ $(function(){
     }
 
     function concatena_enderco(){
-        var nome_logradouro = $('#En_Nome_Logradouro').editable('getValue', true);
+
         var cep = $('#En_CEP').editable('getValue', true);
+        var estado = $('#En_Estado').editable('getValue', true);
+        var municipio = $('#En_Municipio').editable('getValue', true);        
+        var bairro = $('#En_Bairro').editable('getValue', true);
+        var nome_logradouro = $('#En_Nome_Logradouro').editable('getValue', true);
         var numero = $('#En_Num').editable('getValue', true);
         var complemento = $('#En_Complemento').editable('getValue', true);
-        var bairro = $('#En_Bairro').editable('getValue', true);
-        var municipio = $('#En_Municipio').editable('getValue', true);
-        var estado = $('#En_Estado').editable('getValue', true);
+       
         if(cep && nome_logradouro && numero && bairro && municipio && estado){
             var endereco = MapasCulturais.buildAddress(nome_logradouro, numero, complemento, bairro, municipio, estado, cep);
             $('#endereco').editable('setValue', endereco);
@@ -1172,10 +1175,25 @@ $(function(){
         var cep = $('#En_CEP').editable('getValue', true);
         $.getJSON('/site/address_by_postalcode?postalcode='+cep, function(r){
             if (r.success) {
-                $('#En_Nome_Logradouro').editable('setValue', r.streetName != null ? r.streetName : '');
-                $('#En_Bairro').editable('setValue', r.neighborhood != null ? r.neighborhood : '');
-                $('#En_Municipio').editable('setValue', r.city != null ? r.city : '');
                 $('#En_Estado').editable('setValue', r.state != null ? r.state : '');
+                $('#En_Municipio').editable('setValue', r.city != null ? r.city : '');
+                $('#En_Bairro').editable('setValue', r.neighborhood != null ? r.neighborhood : '');
+                $('#En_Nome_Logradouro').editable('setValue', r.streetName != null ? r.streetName : '');
+                
+                var numero = $('#En_Num').editable('getValue', true);
+                if (numero) {
+                    $('#En_Num').editable('setValue', numero);
+                } else {
+                    $('#En_Num').editable('setValue', '-');
+                }
+
+                var complemento = $('#En_Complemento').editable('getValue', true);
+                if (complemento) {
+                    $('#En_Complemento').editable('setValue', complemento);
+                } else {
+                    $('#En_Complemento').editable('setValue', '-');
+                }
+
                 concatena_enderco();
             }
         });
@@ -1194,7 +1212,7 @@ $(function(){
     //First Load
     if ( cities.length == 0 ) {
         var uf = ($('#En_Estado').length > 0) ? $('#En_Estado').editable('getValue', true) : null;
-        if (uf !== null || uf !== undefined){
+        if (uf){
             loadCities(uf);
         }
     }
