@@ -4,9 +4,9 @@ $this->bodyProperties['ng-app'] = "entity.app";
 $this->bodyProperties['ng-controller'] = "EntityController";
 
 $this->addEntityToJs($entity);
+$this->addEntityTypesToJs($entity);
 
 if($this->isEditable()){
-    $this->addEntityTypesToJs($entity);
     $this->addTaxonoyTermsToJs('area');
     $this->addTaxonoyTermsToJs('tag');
 }
