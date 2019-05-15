@@ -353,8 +353,8 @@ return [
                         'private' => true,
                         'label' => \MapasCulturais\i::__('CNPJ'),
                         'validations' => [
-                             'required' => \MapasCulturais\i::__('CNPJ deve ser informado.'),
-                             'v::regex("#^(\d{2}(\.\d{3}){2}/\d{4}-\d{2})$#")' => \MapasCulturais\i::__('Utilize o formato xx.xxx.xxx/xxxx-xx para CNPJ.')
+                             #'required' => \MapasCulturais\i::__('CNPJ deve ser informado.'),
+                             #'v::regex("#^(\d{2}(\.\d{3}){2}/\d{4}-\d{2})$#")' => \MapasCulturais\i::__('Utilize o formato xx.xxx.xxx/xxxx-xx para CNPJ.')
                         ]
                     ),
                 ]
