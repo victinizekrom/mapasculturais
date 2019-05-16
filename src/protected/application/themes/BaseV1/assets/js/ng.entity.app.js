@@ -29,7 +29,7 @@
         }
  
         $scope.data= {
-            entityName: MapasCulturais.request.controller,
+            entityName: MapasCulturais.entity.object.controllerId,
             entityType: $scope.getEntityType()
         }
 
