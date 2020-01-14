@@ -40,11 +40,39 @@
             <!-- Campo Razão Completo -->            
             <p class="privado" ng-if="showField('razaoSocial')">
                 <span class="icon icon-private-info"></span>
-                <span class="label"><?php \MapasCulturais\i::_e("Razão Social");?>:</span> 
+                <span class="label"><?php \MapasCulturais\i::_e("Nome ou Razão Social");?>:</span> 
                 <span class="js-editable <?php echo ($entity->isPropertyRequired($entity,"razaoSocial") && $editEntity? 'required': '');?>" data-edit="razaoSocial" data-original-title="<?php \MapasCulturais\i::esc_attr_e("Razão Social");?>" data-emptytext="<?php \MapasCulturais\i::esc_attr_e("Insira a razão social");?>">
                     <?php echo $entity->razaoSocial; ?>
                 </span>
-            </p>           
+            </p>
+            
+             <!-- Campo Nome Fantasia -->            
+             <p class="privado" ng-if="showField('nomeFantasia')">
+                <span class="icon icon-private-info"></span>
+                <span class="label"><?php \MapasCulturais\i::_e("Nome Fantasia");?>:</span> 
+                <span class="js-editable <?php echo ($entity->isPropertyRequired($entity,"nomeFantasia") && $editEntity? 'required': '');?>" data-edit="nomeFantasia" data-original-title="<?php \MapasCulturais\i::esc_attr_e("Nome Fantasia");?>" data-emptytext="<?php \MapasCulturais\i::esc_attr_e("Insira o nome fantasia");?>">
+                    <?php echo $entity->nomeFantasia; ?>
+                </span>
+            </p>    
+
+             <!-- Campo Natureza Jurídica -->            
+             <p class="privado" ng-if="showField('naturezaJuridica')">
+                <span class="icon icon-private-info"></span>
+                <span class="label"><?php \MapasCulturais\i::_e("Código da Natureza Jurídica");?>:</span> 
+                <span class="js-editable <?php echo ($entity->isPropertyRequired($entity,"naturezaJuridica") && $editEntity? 'required': '');?>" data-edit="naturezaJuridica" data-original-title="<?php \MapasCulturais\i::esc_attr_e("Código da Natureza Juridica");?>" data-emptytext="<?php \MapasCulturais\i::esc_attr_e("Insira o código da natureza juridica");?>">
+                    <?php echo $entity->naturezaJuridica; ?>
+                </span>
+            </p> 
+            
+             <!-- Campo Natureza Jurídica -->            
+             <p class="privado" ng-if="showField('atividadePrincipal')">
+                <span class="icon icon-private-info"></span>
+                <span class="label"><?php \MapasCulturais\i::_e("Código da Atividade Principal");?>:</span> 
+                <span class="js-editable <?php echo ($entity->isPropertyRequired($entity,"atividadePrincipal") && $editEntity? 'required': '');?>" data-edit="atividadePrincipal" data-original-title="<?php \MapasCulturais\i::esc_attr_e("Código da Atividade Principal");?>" data-emptytext="<?php \MapasCulturais\i::esc_attr_e("Insira o código da atividade principal");?>">
+                    <?php echo $entity->atividadePrincipal; ?>
+                </span>
+            </p>   
+
             <!-- Campo Nome Social -->
             <p class="privado" ng-if="showField('nomeSocial')">
                 <span class="icon icon-private-info"></span>
@@ -134,12 +162,12 @@
                     data-edit="escolaridade"
                     data-original-title="<?php \MapasCulturais\i::esc_attr_e("Escolaridade");?>"
                     data-emptytext="<?php \MapasCulturais\i::esc_attr_e("Selecione sua escolaridade");?>"><?php echo $entity->escolaridade; ?></span>
-            </p>
+            </p>            
             <!-- Campo CPF -->
             <p class="privado" ng-if="showField('documento')">
                 <span class="icon icon-private-info"></span>
                 <span class="label"><?php \MapasCulturais\i::_e("CPF");?>:</span> 
-                <span class="js-editable <?php echo ($entity->isPropertyRequired($entity,"documento") && $editEntity? 'required': '');?>" data-edit="documento" data-original-title="<?php \MapasCulturais\i::esc_attr_e("CPF");?>" data-emptytext="<?php \MapasCulturais\i::esc_attr_e("Insira o CPF com pontos e hífens");?>">
+                <span class="js-editable js-mask-cpf <?php echo ($entity->isPropertyRequired($entity,"documento") && $editEntity? 'required': '');?>" data-edit="documento" data-original-title="<?php \MapasCulturais\i::esc_attr_e("CPF");?>" data-emptytext="<?php \MapasCulturais\i::esc_attr_e("Insira o CPF com pontos e hífens");?>">
                     <?php echo $entity->documento; ?>
                 </span>
             </p>
@@ -147,7 +175,7 @@
             <p class="privado" ng-if="showField('cnpj')">
                 <span class="icon icon-private-info"></span>
                 <span class="label"><?php \MapasCulturais\i::_e("CNPJ");?>:</span> 
-                <span class="js-editable <?php echo ($entity->isPropertyRequired($entity,"cnpj") && $editEntity? 'required': '');?>" data-edit="cnpj" data-original-title="<?php \MapasCulturais\i::esc_attr_e("CNPJ");?>" data-emptytext="<?php \MapasCulturais\i::esc_attr_e("Insira o CNPJ com pontos, hífens e barras");?>">
+                <span class="js-editable js-mask-cnpj <?php echo ($entity->isPropertyRequired($entity,"cnpj") && $editEntity? 'required': '');?>" data-edit="cnpj" data-original-title="<?php \MapasCulturais\i::esc_attr_e("CNPJ");?>" data-emptytext="<?php \MapasCulturais\i::esc_attr_e("Insira o CNPJ com pontos, hífens e barras");?>">
                     <?php echo $entity->cnpj; ?>
                 </span>
             </p>
@@ -190,16 +218,6 @@
                 </span>
             </p>
         <?php endif; ?>
-        
-        <?php if($this->isEditable() || $entity->emailPublico): ?>
-            <!-- Email Público -->
-            <p ng-if="showField('emailPublico')">
-                <span class="label"><?php \MapasCulturais\i::_e("E-mail");?>:</span> 
-                <span class="js-editable <?php echo ($entity->isPropertyRequired($entity,"emailPublico") && $this->isEditable()? 'required': '');?>" data-edit="emailPublico" data-original-title="<?php \MapasCulturais\i::esc_attr_e("Email Público");?>" data-emptytext="<?php \MapasCulturais\i::esc_attr_e("Insira um email que será exibido publicamente");?>">
-                    <?php echo $entity->emailPublico; ?>
-                </span>
-            </p>
-        <?php endif; ?>
 
         <?php if($this->isEditable()): ?>
             <!-- Telefone Principal -->
@@ -211,6 +229,18 @@
                 </span>
             </p>
         <?php endif; ?>
+        
+        <?php if($this->isEditable() || $entity->emailPublico): ?>
+            <!-- Email Público -->
+            <p ng-if="showField('emailPublico')">
+                <span class="label"><?php \MapasCulturais\i::_e("E-mail Público");?>:</span> 
+                <span class="js-editable <?php echo ($entity->isPropertyRequired($entity,"emailPublico") && $this->isEditable()? 'required': '');?>" data-edit="emailPublico" data-original-title="<?php \MapasCulturais\i::esc_attr_e("Email Público");?>" data-emptytext="<?php \MapasCulturais\i::esc_attr_e("Insira um email que será exibido publicamente");?>">
+                    <?php echo $entity->emailPublico; ?>
+                </span>
+            </p>
+        <?php endif; ?>
+
+        
 
         <?php if($this->isEditable() || $entity->telefonePublico): ?>
             <!-- Telefone Público -->
@@ -219,6 +249,27 @@
                 <span class="js-editable js-mask-phone <?php echo ($entity->isPropertyRequired($entity,"telefonePublico") && $this->isEditable()? 'required': '');?>" data-edit="telefonePublico" data-original-title="<?php \MapasCulturais\i::esc_attr_e("Telefone Público");?>" data-emptytext="<?php \MapasCulturais\i::esc_attr_e("Insira um telefone que será exibido publicamente");?>">
                     <?php echo $entity->telefonePublico; ?>
                 </span>
+            </p>
+        <?php endif; ?>
+
+        <?php if($this->isEditable()): ?>
+            <!-- Possui Deficiência -->
+            <p class="privado" ng-if="showField('possuiDeficiencia')">
+                    <span class="icon icon-private-info"></span><span class="label"><?php \MapasCulturais\i::_e("Você é uma pessoa com deficiência?");?>:</span>
+                    <span
+                        class="js-editable <?php echo ($entity->isPropertyRequired($entity,"possuiDeficiencia") && $editEntity? 'required': '');?>"
+                        data-edit="possuiDeficiencia"
+                        data-original-title="<?php \MapasCulturais\i::esc_attr_e("Você é uma pessoa com deficiência?");?>"
+                        data-emptytext="<?php \MapasCulturais\i::esc_attr_e("Selecione");?>"><?php echo $entity->possuiDeficiencia; ?></span>
+                </p>
+            <!-- Tipo de Deficiência -->
+            <p class="privado" ng-if="showField('tipoDeficiencia')">
+                <span class="icon icon-private-info"></span><span class="label"><?php \MapasCulturais\i::_e("Em caso de resposta afirmativa, que tipo de deficiência?");?>:</span>
+                <span
+                    class="js-editable <?php echo ($entity->isPropertyRequired($entity,"tipoDeficiencia") && $editEntity? 'required': '');?>"
+                    data-edit="tipoDeficiencia"
+                    data-original-title="<?php \MapasCulturais\i::esc_attr_e("Em caso de resposta afirmativa, que tipo de deficiência?");?>"
+                    data-emptytext="<?php \MapasCulturais\i::esc_attr_e("Selecione");?>"><?php echo $entity->tipoDeficiencia; ?></span>
             </p>
         <?php endif; ?>
 

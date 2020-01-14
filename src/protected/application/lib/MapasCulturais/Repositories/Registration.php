@@ -108,12 +108,18 @@ class Registration extends \MapasCulturais\Repository{
         return $num;
     }
 
-    function countByOpportunityAndOwner(\MapasCulturais\Entities\Opportunity $opportunity, \MapasCulturais\Entities\Agent $owner){
+    function countByOpportunityAndOwner(\MapasCulturais\Entities\Opportunity $opportunity, \MapasCulturais\Entities\Agent $owner, $include_draft = false){
         if(!$opportunity->id || !$owner->id){
             return 0;
         }
 
-        $dql = "SELECT COUNT(r.id) FROM {$this->getClassName()} r WHERE r.opportunity = :oppor AND r.owner = :owner";
+        $dql_status = '';
+
+        if(!$include_draft){
+            $dql_status = "AND r.status > 0";
+        }
+        
+        $dql = "SELECT COUNT(r.id) FROM {$this->getClassName()} r WHERE r.opportunity = :oppor AND r.owner = :owner $dql_status";
 
         $q = $this->_em->createQuery($dql);
 

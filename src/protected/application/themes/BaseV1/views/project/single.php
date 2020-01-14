@@ -17,6 +17,8 @@ if(!$entity->isNew() && $entity->canUser('@control')){
 if($this->isEditable()){
     $this->addEntityTypesToJs($entity);
     $this->addTaxonoyTermsToJs('tag');
+    $this->addTaxonoyTermsToJs('area');
+
 }
 
 $this->includeAngularEntityAssets($entity);
@@ -88,6 +90,7 @@ $child_entity_request = isset($child_entity_request) ? $child_entity_request : n
     <!-- Related Seals BEGIN -->
     <?php $this->part('related-seals.php', array('entity'=>$entity)); ?>
     <!-- Related Seals END -->
+    <?php $this->part('widget-areas', ['entity' => $entity]); ?>
     <?php $this->part('widget-tags', array('entity'=>$entity)); ?>
     <?php $this->part('redes-sociais', array('entity'=>$entity)); ?>
 </div>

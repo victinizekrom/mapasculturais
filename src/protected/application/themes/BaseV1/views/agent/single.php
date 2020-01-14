@@ -68,7 +68,7 @@ $editEntity = $this->controller->action === 'create' || $this->controller->actio
             
             <?php $this->part('singles/agent-form', ['entity' => $entity, 'editEntity' => $editEntity]); ?><!--.part/singles/agent-form.php -->
             
-            <?php $this->part('singles/location', ['entity' => $entity, 'has_private_location' => true]); ?><!--.part/singles/location.php -->
+            <?php $this->part('singles/location', ['entity' => $entity, 'has_private_location' => true, 'editEntity' => $editEntity]); ?><!--.part/singles/location.php -->
 
             <?php if ( $this->isEditable() || $entity->longDescription ): ?>
                 <h3><?php \MapasCulturais\i::_e("Descrição");?></h3>

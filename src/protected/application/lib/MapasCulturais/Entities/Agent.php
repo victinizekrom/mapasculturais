@@ -269,6 +269,7 @@ class Agent extends \MapasCulturais\Entity
     public function __construct($user = null) {
         $this->user = $user ? $user : App::i()->user;
         $this->type = 1;
+        $this->parent = null;
 
         parent::__construct();
     }
@@ -395,13 +396,13 @@ class Agent extends \MapasCulturais\Entity
     }
 
     function setParent(Agent $parent = null){
-        if($parent->equals($this->parent)) {
-            return true;
+        if($parent->equals($this) || $parent->equals($this->parent)) {
+            return;
         }
-
         $this->nestedSetParent($parent);
-        if($parent)
+        if($parent) {
             $this->setUser($parent->user);
+        }            
     }
 
     function getParent(){
@@ -494,21 +495,20 @@ class Agent extends \MapasCulturais\Entity
         }
     }
 
-    /** @ORM\PrePersist */
-    public function __setParent($args = null){
-        if($this->equals($this->ownerUser->profile)){
-            $this->parent = null;
-        }
-    }
-
-
     //============================================================= //
     // The following lines ara used by MapasCulturais hook system.
     // Please do not change them.
     // ============================================================ //
 
     /** @ORM\PrePersist */
-    public function prePersist($args = null){ parent::prePersist($args); }
+    public function prePersist($args = null){ 
+        if (!empty($this->parent)) {
+            if((int) $this->id == (int) $this->parent->id){
+                $this->parent = null;
+            }
+        }
+        parent::prePersist($args);
+    }
     /** @ORM\PostPersist */
     public function postPersist($args = null){ parent::postPersist($args); }
 
@@ -518,7 +518,14 @@ class Agent extends \MapasCulturais\Entity
     public function postRemove($args = null){ parent::postRemove($args); }
 
     /** @ORM\PreUpdate */
-    public function preUpdate($args = null){ parent::preUpdate($args); }
+    public function preUpdate($args = null){ 
+        if (!empty($this->parent)) {
+            if((int) $this->id == (int) $this->parent->id){
+                $this->parent = null;
+            }
+        }
+        parent::preUpdate($args); 
+    }
     /** @ORM\PostUpdate */
     public function postUpdate($args = null){ parent::postUpdate($args); }
 }

@@ -589,13 +589,21 @@ class Module extends \MapasCulturais\Module{
         });
 
         $app->hook('entity(Registration).canUser(view)', function($user, &$result) use($app){
+            $app = App::i();
+
+            if(is_null($user)){
+                return;
+            }
+            
             if($result){
                 return;
             }
 
             if($registration_id = $this->nextPhaseRegistrationId){
                 $next_phase_registration = $app->repo('Registration')->find($registration_id);
-                $result = $next_phase_registration->canUser('view', $user);
+                if ($next_phase_registration){
+                    $result = $next_phase_registration->canUser('view', $user);
+                }                
             }
         });
 

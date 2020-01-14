@@ -287,33 +287,34 @@ return [
                         'label' => \MapasCulturais\i::__('CPF'),
                         'validations' => [
                              'required' => \MapasCulturais\i::__('CPF deve ser informado.'),
-                             'v::regex("#^(\d{3}\.\d{3}\.\d{3}-\d{2})$#")' => \MapasCulturais\i::__('Utilize o formato xxx.xxx.xxx-xx para CPF.')
+                             'v::regex("#^(\d{3}\.\d{3}\.\d{3}-\d{2})$#")' => \MapasCulturais\i::__('Utilize o formato xxx.xxx.xxx-xx para CPF.'),
+                             'v::cpf()' => \MapasCulturais\i::__('O cpf inserido não é válido')
                         ]
                     ),
                     'identidade' => [
                         'private' => true,
                         'label' => \MapasCulturais\i::__('Informe sua Identidade (RG)'),
                         'type' => 'text',
-                         'validations' => [
-                             'required' => \MapasCulturais\i::__('O campo Identidade (RG) deve ser preenchido.')
-                         ]
+                         #'validations' => [
+                         #    'required' => \MapasCulturais\i::__('O campo Identidade (RG) deve ser preenchido.')
+                         #]
                     ],
                     'expedicaoIdentidade' => [
                         'private' => true,
                         'label' => \MapasCulturais\i::__('Informe a Data de Expedição (RG)'),
                         'type' => 'date',
-                        'validations' => [
-                            'required' => \MapasCulturais\i::__('O campo Data de Expedição (RG) deve ser preenchido.'),
-                            'v::date("Y-m-d")' => \MapasCulturais\i::__('Data inválida').'{{format}}',
-                        ]
+                        #'validations' => [
+                        #    'required' => \MapasCulturais\i::__('O campo Data de Expedição (RG) deve ser preenchido.'),
+                        #    'v::date("Y-m-d")' => \MapasCulturais\i::__('Data inválida').'{{format}}',
+                        #]
                     ],
                     'expedidorIdentidade' => [
                         'private' => true,
                         'label' => \MapasCulturais\i::__('Informe o Órgão Expedidor (RG)'),
-                        'validations' => [
-                            'required' => \MapasCulturais\i::__('O campo Órgão Expedidor (RG) deve ser preenchido.'),
-                            'v::allOf(v::regex("#[a-zA-Z]/[a-zA-Z]{2}#"))' => \MapasCulturais\i::__('Por favor, informe o expedidor/unidade federativa, exemplo: SSP/CE , SSP/DF')
-                        ]
+                        #'validations' => [
+                        #    'required' => \MapasCulturais\i::__('O campo Órgão Expedidor (RG) deve ser preenchido.'),
+                        #    'v::allOf(v::regex("#[a-zA-Z]/[a-zA-Z]{2}#"))' => \MapasCulturais\i::__('Por favor, informe o expedidor/unidade federativa, exemplo: SSP/CE , SSP/DF')
+                        #]
                     ],
                     'nacionalidade' => [
                         'private' => true,
@@ -326,34 +327,78 @@ return [
                         'label' => \MapasCulturais\i::__('Informe sua Naturalidade'),
                         'type' => 'string'
                     ],
+
+                    'possuiDeficiencia' => [
+                        'private' => true,
+                        'label' => \MapasCulturais\i::__('Você é uma pessoa com deficiência?'),
+                        'type' => 'select',
+                        'options' => array(
+                            '' => \MapasCulturais\i::__('Não Informar'),
+                            'Sim' => \MapasCulturais\i::__('Sim'),
+                            'Não' => \MapasCulturais\i::__('Não')                            
+                        )
+                    ],
+
+                    'tipoDeficiencia' => [
+                        'private' => true,
+                        'label' => \MapasCulturais\i::__('Em caso de resposta afirmativa, que tipo de deficiência?'),
+                        'type' => 'select',
+                        'options' => array(
+                            '' => \MapasCulturais\i::__('Não Informar'),
+                            'Motora' => \MapasCulturais\i::__('Motora'),
+                            'Fisica' => \MapasCulturais\i::__('Física'),
+                            'Visual' => \MapasCulturais\i::__('Visual'),
+                            'Mental' => \MapasCulturais\i::__('Mental'),
+                            'Auditiva' => \MapasCulturais\i::__('Auditiva'),
+                            'Multipla' => \MapasCulturais\i::__('Múltipla'),
+                            'Linguagem' => \MapasCulturais\i::__('Linguagem')                            
+                        )
+                    ],
             
                 ]    
             ],
         2 => [ 
                 'name' => \MapasCulturais\i::__('Coletivo'),
                 'metadata' => [
+
+                    'nomeFantasia' => [
+                        'private' => true,
+                        'label' => \MapasCulturais\i::__('Nome Fantasia'),
+                    ],
+
+                    'naturezaJuridica' => [
+                        'private' => true,
+                        'label' => \MapasCulturais\i::__('Código da Natureza Jurídica'),                        
+                    ],
+
+                    'atividadePrincipal' => [
+                        'private' => true,
+                        'label' => \MapasCulturais\i::__('Atividade Principal'),                        
+                    ],
+
                     'razaoSocial' => [
                         'private' => true,
-                        'label' => \MapasCulturais\i::__('Razão Social'),
+                        'label' => \MapasCulturais\i::__('Nome ou Razão Social'),
                         'validations' => [
-                            'required' => \MapasCulturais\i::__('O campo Razão Social deve ser preenchido.')
+                            'required' => \MapasCulturais\i::__('O campo Nome ou Razão Social deve ser preenchido.')
                         ]
                     ],
+
                     'dataDeFundacao' => array(
                         'private' => true,
-                        'label' => \MapasCulturais\i::__('Data de Fundação'),
+                        'label' => \MapasCulturais\i::__('Data de Fundação (Opcional)'),
                         'type' => 'date',
-                        'validations' => array(
+                        'validations' => [
                             'v::date("Y-m-d")' => \MapasCulturais\i::__('Data inválida').'{{format}}',
-                        )
+                        ]
                     ),
                     'cnpj' => array(
                         'private' => true,
                         'label' => \MapasCulturais\i::__('CNPJ'),
-                        'validations' => [
+                        #'validations' => [
                              #'required' => \MapasCulturais\i::__('CNPJ deve ser informado.'),
                              #'v::regex("#^(\d{2}(\.\d{3}){2}/\d{4}-\d{2})$#")' => \MapasCulturais\i::__('Utilize o formato xx.xxx.xxx/xxxx-xx para CNPJ.')
-                        ]
+                        #]
                     ),
                 ]
 

@@ -1812,7 +1812,7 @@ class Theme extends MapasCulturais\Theme {
             'reachedMax' =>  i::__('Você atingiu o limite máximo de 1 inscrição aprovada'),
             'reachedMaxPlural' =>  i::__('Você atingiu o limite máximo de {{num}} inscrições aprovadas'),
             'limitReached' =>  i::__('O limite de inscrições para o agente informado se esgotou.'),
-            'VacanciesOver' =>  i::__('O número de vagas da inscrição no oportunidade se esgotou.'),
+            'VacanciesOver' =>  i::__('O número de vagas da inscrição na oportunidade se esgotou.'),
             'needResponsible' =>  i::__('Para se inscrever nesta oportunidade você deve selecionar um agente responsável.'),
             'correctErrors' =>  i::__('Corrija os erros indicados abaixo.'),
             'registrationSent' =>  i::__('Inscrição enviada. Aguarde tela de sumário.'),
@@ -2007,6 +2007,8 @@ class Theme extends MapasCulturais\Theme {
     }
 
     protected function _getFilters(){
+        $app = App::i();
+                
         $filters = [
             'space' => [
                 'area' => [
@@ -2036,18 +2038,6 @@ class Theme extends MapasCulturais\Theme {
                         'param' => 'acessibilidade',
                         'value' => 'EQ(Sim)'
                     ],
-                ],
-                'verificados' => [
-                    'label' => $this->dict('search: verified results', false),
-                    'tag' => $this->dict('search: verified', false),
-                    'placeholder' => 'Exibir somente ' . $this->dict('search: verified results', false),
-                    'fieldType' => 'checkbox-verified',
-                    'addClass' => 'verified-filter',
-                    'isArray' => false,
-                    'filter' => [
-                        'param' => '@verified',
-                        'value' => 'IN(1)'
-                    ]
                 ]
             ],
             'agent' => [
@@ -2070,33 +2060,9 @@ class Theme extends MapasCulturais\Theme {
                         'param' => 'type',
                         'value' => 'EQ({val})'
                     ]
-                ],
-                'verificados' => [
-                    'label' => $this->dict('search: verified results', false),
-                    'tag' => $this->dict('search: verified', false),
-                    'placeholder' => $this->dict('search: display only verified results', false),
-                    'fieldType' => 'checkbox-verified',
-                    'addClass' => 'verified-filter',
-                    'isArray' => false,
-                    'filter' => [
-                        'param' => '@verified',
-                        'value' => 'IN(1)'
-                    ]
                 ]
             ],
             'event' => [
-                // TODO: Apply filter FromTo from configuration, removing from template "filter-field.php"
-                // [
-                //     'label' => ['De', 'a'],
-                //     'fieldType' => 'dateFromTo',
-                //     'placeholder' => '00/00/0000',
-                //     'isArray' => false,
-                //     'prefix' => '@',
-                //     'filter' => [
-                //         'param' => ['from', 'to'],
-                //         'value' => ['LTE({val})', 'GTE({val})']
-                //     ]
-                // ],
                 'linguagem' => [
                     'label' => i::__('Linguagem'),
                     'placeholder' => i::__('Selecione as linguagens'),
@@ -2114,18 +2080,6 @@ class Theme extends MapasCulturais\Theme {
                         'param' => 'classificacaoEtaria',
                         'value' => 'IN({val})'
                     ]
-                ],
-                'verificados' => [
-                    'label' => $this->dict('search: verified results', false),
-                    'tag' => $this->dict('search: verified', false),
-                    'placeholder' => $this->dict('search: display only verified results', false),
-                    'fieldType' => 'checkbox-verified',
-                    'isArray' => false,
-                    'addClass' => 'verified-filter',
-                    'filter' => [
-                        'param' => '@verified',
-                        'value' => 'IN(1)'
-                    ]
                 ]
             ],
             'project' => [
@@ -2141,18 +2095,6 @@ class Theme extends MapasCulturais\Theme {
                 'inscricoes' => [
                     'label' => i::__('Inscrições Abertas'),
                     'fieldType' => 'custom.project.ropen'
-                ],
-                'verificados' => [
-                    'label' => $this->dict('search: verified results', false),
-                    'tag' => $this->dict('search: verified', false),
-                    'placeholder' => $this->dict('search: display only verified results', false),
-                    'fieldType' => 'checkbox-verified',
-                    'addClass' => 'verified-filter',
-                    'isArray' => false,
-                    'filter' => [
-                        'param' => '@verified',
-                        'value' => 'IN(1)'
-                    ]
                 ]
             ],
             'opportunity' => [
@@ -2168,8 +2110,13 @@ class Theme extends MapasCulturais\Theme {
                 'inscricoes' => [
                     'label' => i::__('Inscrições Abertas'),
                     'fieldType' => 'custom.opportunity.ropen'
-                ],
-                'verificados' => [
+                ]
+            ]
+        ];
+
+        if ( isset($app->config["app.enabled.seals"])) {
+            if ($app->config["app.enabled.seals"] === true) {
+                $filters['space']['verificados'] = [
                     'label' => $this->dict('search: verified results', false),
                     'tag' => $this->dict('search: verified', false),
                     'placeholder' => $this->dict('search: display only verified results', false),
@@ -2180,9 +2127,57 @@ class Theme extends MapasCulturais\Theme {
                         'param' => '@verified',
                         'value' => 'IN(1)'
                     ]
-                ]
-            ]
-        ];
+                ];
+                $filters['agent']['verificados'] = [
+                    'label' => $this->dict('search: verified results', false),
+                    'tag' => $this->dict('search: verified', false),
+                    'placeholder' => $this->dict('search: display only verified results', false),
+                    'fieldType' => 'checkbox-verified',
+                    'addClass' => 'verified-filter',
+                    'isArray' => false,
+                    'filter' => [
+                        'param' => '@verified',
+                        'value' => 'IN(1)'
+                    ]
+                ];
+                $filters['event']['verificados'] = [
+                    'label' => $this->dict('search: verified results', false),
+                    'tag' => $this->dict('search: verified', false),
+                    'placeholder' => $this->dict('search: display only verified results', false),
+                    'fieldType' => 'checkbox-verified',
+                    'isArray' => false,
+                    'addClass' => 'verified-filter',
+                    'filter' => [
+                        'param' => '@verified',
+                        'value' => 'IN(1)'
+                    ]
+                ];
+                $filters['project']['verificados'] = [
+                    'label' => $this->dict('search: verified results', false),
+                    'tag' => $this->dict('search: verified', false),
+                    'placeholder' => $this->dict('search: display only verified results', false),
+                    'fieldType' => 'checkbox-verified',
+                    'addClass' => 'verified-filter',
+                    'isArray' => false,
+                    'filter' => [
+                        'param' => '@verified',
+                        'value' => 'IN(1)'
+                    ]
+                ];
+                $filters['opportunity']['verificados'] = [
+                    'label' => $this->dict('search: verified results', false),
+                    'tag' => $this->dict('search: verified', false),
+                    'placeholder' => $this->dict('search: display only verified results', false),
+                    'fieldType' => 'checkbox-verified',
+                    'addClass' => 'verified-filter',
+                    'isArray' => false,
+                    'filter' => [
+                        'param' => '@verified',
+                        'value' => 'IN(1)'
+                    ]
+                ];
+            }
+        }
 
         App::i()->applyHookBoundTo($this, 'search.filters', [&$filters]);
 

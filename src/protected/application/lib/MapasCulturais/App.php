@@ -2614,7 +2614,7 @@ class App extends \Slim\Slim{
             if (isset($this->_config['mailer.user']) && !empty($this->_config['mailer.user']) &&
                 isset($this->_config['mailer.psw']) && !empty($this->_config['mailer.psw']) ) {
 
-                $transport->setUsername($this->_config['mailer.user'])->setPassword($this->_config['mailer.psw']);
+                $transport->setUsername($this->_config['mailer.user'])->setPassword($this->_config['mailer.psw'])->setStreamOptions(array('ssl' => array('allow_self_signed' => true, 'verify_peer' => false)));
             }
 
         } elseif ($transport_type == 'sendmail' && false !== $server) {

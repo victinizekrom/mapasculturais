@@ -363,8 +363,17 @@ class Registration extends EntityController {
         $user = (isset($this->postData['uid'])) ? $app->repo('User')->find($this->postData['uid']) : null;
         $status = (isset($this->urlData['status'])) ? $this->urlData['status'] : null;
         
+        $errors = [];
         $errors = $registration->getEvaluationMethod()->getValidationErrors($registration->getEvaluationMethodConfiguration(), $this->postData['data']);
-        
+
+        if(is_null($user)){
+            $user = $app->user;
+        }
+
+        if($user->is('guest')) {
+            $errors = ['O Usuário não tem permissão para realizar essa ação'];
+        }
+
         if(count($errors) > 0){
             $this->errorJson($errors, 400);
             return;
@@ -386,8 +395,17 @@ class Registration extends EntityController {
         $user = (isset($this->postData['uid'])) ? $app->repo('User')->find($this->postData['uid']) : null;
         $status = (isset($this->urlData['status'])) ? $this->urlData['status'] : null;
         
+        $errors = [];
         $errors = $registration->getEvaluationMethod()->getValidationErrors($registration->getEvaluationMethodConfiguration(), $this->postData['data']);
-        
+
+        if(is_null($user)){
+            $user = $app->user;
+        }
+
+        if($user->is('guest')) {
+            $errors = ['O Usuário não tem permissão para realizar essa ação'];
+        }
+
         if(count($errors) > 0){
             $this->errorJson($errors, 400);
             return;

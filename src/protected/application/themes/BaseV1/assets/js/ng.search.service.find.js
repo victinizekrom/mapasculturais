@@ -257,6 +257,10 @@
                 }else if(entity === 'event'){
                     selectData += ',classificacaoEtaria,project.name,project.singleUrl,occurrences.{*,space.{*}}';
                 }
+                
+                if(entity === 'agent' && data.global.viewMode === 'map'){
+                    searchData['publicLocation'] = 'EQ(1)';
+                }
 
                 if(data.global.viewMode === 'list'){
                     searchData['@select'] = selectData;

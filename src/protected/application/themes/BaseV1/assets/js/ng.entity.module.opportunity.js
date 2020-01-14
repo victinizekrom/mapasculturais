@@ -1885,8 +1885,18 @@ module.controller('OpportunityController', ['$scope', '$rootScope', '$timeout', 
                     if(response.error){
                         var focused = false;
                         Object.keys(response.data).forEach(function(field, index){
+
+                            var message = response.data[field] instanceof Array ? response.data[field].join(' ') : response.data[field];
+                            message = message.replace(/"/g, '&quot;');
+                            $scope.data.propLabels.forEach(function(prop){
+                                message = message.replace('{{'+prop.name+'}}', prop.label);
+                            });
+
                             var $el;
-                            if(field === 'projectName'){
+
+                            if(field === 'id'){
+                                MapasCulturais.Messages.error(message);
+                            }else if(field === 'projectName'){
                                 $el = $('#projectName').parent().find('.label');
                             }else if(field === 'category'){
                                 $el = $('.js-editable-registrationCategory').parent();
@@ -1895,15 +1905,13 @@ module.controller('OpportunityController', ['$scope', '$rootScope', '$timeout', 
                             }else {
                                 $el = $('#' + field).find('div:first');
                             }
-                            var message = response.data[field] instanceof Array ? response.data[field].join(' ') : response.data[field];
-                            message = message.replace(/"/g, '&quot;');
-                            $scope.data.propLabels.forEach(function(prop){
-                                message = message.replace('{{'+prop.name+'}}', prop.label);
-                            });
-                            $el.append('<span title="' + message + '" class="danger hltip js-response-error" data-hltip-classes="hltip-danger"></span>');
-                            if(!focused){
-                                $('html,body').animate({scrollTop: $el.parents('li').get(0).offsetTop - 10}, 300);
-                                focused = true;
+                           
+                            if ($el.length > 0){
+                                $el.append('<span title="' + message + '" class="danger hltip js-response-error" data-hltip-classes="hltip-danger"></span>');                            
+                                if(!focused){
+                                    $('html,body').animate({scrollTop: $el.parents('li').get(0).offsetTop - 10}, 300);
+                                    focused = true;
+                                }
                             }
                         });
                         MapasCulturais.Messages.error(labels['correctErrors']);

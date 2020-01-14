@@ -777,6 +777,16 @@ class User extends \MapasCulturais\Entity implements \MapasCulturais\UserInterfa
       }
     }
 
+    public function setEmail($email) {
+        $email = filter_var($email, FILTER_SANITIZE_EMAIL);
+        $email = strtolower($email);
+        $this->email = $email;
+    }
+
+    public function getEmail() {
+        return $this->email;
+    }
+
     //============================================================= //
     // The following lines ara used by MapasCulturais hook system.
     // Please do not change them.

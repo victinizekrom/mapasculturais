@@ -4,6 +4,7 @@ namespace MapasCulturais\Entities;
 use Doctrine\ORM\Mapping as ORM;
 use MapasCulturais\Traits;
 use MapasCulturais\App;
+use MapasCulturais\UserInterface;
 
 /**
  * Registration
@@ -225,6 +226,10 @@ class Registration extends \MapasCulturais\Entity
             'owner' => [
                 'required' => \MapasCulturais\i::__("O agente responsável é obrigatório."),
                 '$this->validateOwnerLimit()' => \MapasCulturais\i::__('Foi excedido o limite de inscrições para este agente responsável.'),
+
+            ] ,
+            'id' => [
+                '$this->validateCountLimit()' => \MapasCulturais\i::__('Foi excedido o limite de inscrições. Por favor, entrar em contato com o administrador.'),
             ]
         ];
     }
@@ -294,16 +299,20 @@ class Registration extends \MapasCulturais\Entity
         $this->owner = $agent;
     }
 
+    function validateCountLimit(){
+        $registrationCount = $this->repo()->countByOpportunity($this->opportunity, false);
+        $limit = (int) $this->opportunity->registrationLimit;
+        if($limit > 0 && $registrationCount >= $limit){
+            return false;
+        }
+        return true;
+    }
+
     function validateOwnerLimit(){
-        // updating and changing owner
-        if($this->id && !$this->_ownerChanged){
-            return true;
-        }else{
-            $registrationCount = $this->repo()->countByOpportunityAndOwner($this->opportunity, $this->owner);
-            $limit = $this->opportunity->registrationLimitPerOwner;
-            if($limit > 0 && $registrationCount >= $limit){
-                return false;
-            }
+        $registrationCount = $this->repo()->countByOpportunityAndOwner($this->opportunity, $this->owner, false);
+        $limit = (int) $this->opportunity->registrationLimitPerOwner;
+        if($limit > 0 && $registrationCount >= $limit){
+            return false;
         }
         return true;
     }
@@ -594,6 +603,14 @@ class Registration extends \MapasCulturais\Entity
             $errorsResult['category'] = [sprintf(\MapasCulturais\i::__('O campo "%s" é obrigatório.'), $opportunity->registrationCategTitle)];
         }
 
+        if(!$this->validateCountLimit()){
+            $errorsResult['id'][] = \MapasCulturais\i::__('Foi excedido o limite de inscrições. Por favor, entrar em contato com o administrador.');
+        }
+        
+        if(!$this->validateOwnerLimit()){
+            $errorsResult['id'][] = \MapasCulturais\i::__('Foi excedido o limite de inscrições para este agente responsável.');
+        }
+
         $definitionsWithAgents = $this->_getDefinitionsWithAgents();
 
         // validate agents
@@ -706,7 +723,7 @@ class Registration extends \MapasCulturais\Entity
         return $errorsResult;
     }
 
-    protected function _getAgentsData(){
+    public function _getAgentsData(){
         $app = App::i();
 
         $propertiesToExport = $app->config['registration.propertiesToExport'];
@@ -714,9 +731,18 @@ class Registration extends \MapasCulturais\Entity
         $exportData = [];
 
         foreach($this->_getAgentsWithDefinitions() as $agent){
+
+            $metas_agent = [];
+            $metas = $app->getRegisteredMetadata('MapasCulturais\Entities\Agent', $agent->type);
+            foreach($metas as $metadata){
+                $metas_agent[] = $metadata->key;
+            }
+
+
             $exportData[$agent->definition->agentRelationGroupName] = [];
 
             foreach($propertiesToExport as $p){
+                if (!in_array($p,$metas_agent)) continue;
                 $exportData[$agent->definition->agentRelationGroupName][$p] = $agent->$p;
             }
         }
@@ -842,6 +868,10 @@ class Registration extends \MapasCulturais\Entity
             return false;
         }
 
+        if($this->owner->user->id == $user->id) {
+            return false;
+        }
+
         if($this->canUser('@control')) {	
             return true;	
         }
@@ -963,11 +993,15 @@ class Registration extends \MapasCulturais\Entity
         $evaluation->save(true);
     }
 
-    function saveUserEvaluation(array $data, User $user = null, $evaluation_status = null){
+    function saveUserEvaluation(array $data, UserInterface $user = null, $evaluation_status = null){
         $app = App::i();
+        
         if(is_null($user)){
             $user = $app->user;
         }
+
+        if($user->is('guest'))
+            return false;
 
         $evaluation = $this->getUserEvaluation($user);
         if(!$evaluation){

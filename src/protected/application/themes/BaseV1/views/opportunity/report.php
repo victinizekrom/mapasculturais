@@ -3,6 +3,9 @@ use MapasCulturais\Entities\Registration as R;
 use MapasCulturais\Entities\Agent;
 use MapasCulturais\i;
 
+$app->disableAccessControl();
+
+
 function echoStatus($registration) {
     switch ($registration->status){
         case R::STATUS_APPROVED:
@@ -42,6 +45,20 @@ foreach($entity->registrationFieldConfigurations as $field) :
 endforeach;
 
 ksort($custom_fields);
+
+$metas_individual=[];
+$metas_coletivo=[];
+
+$metas = $app->getRegisteredMetadata('MapasCulturais\Entities\Agent', 1);
+foreach($metas as $metadata){
+    $metas_individual[] = $metadata->key;
+}
+
+$metas = $app->getRegisteredMetadata('MapasCulturais\Entities\Agent', 2);
+foreach($metas as $metadata){
+    $metas_coletivo[] = $metadata->key;
+}
+
 ?>
 <style>
     tbody td, table th{
@@ -70,14 +87,20 @@ ksort($custom_fields);
 
             <th><?php i::_e('Anexos') ?></th>
             <?php foreach($entity->getUsedAgentRelations() as $def): ?>
-                <th><?php echo $def->label; ?></th>
+                <th><?php echo $def->label; ?> - <?php i::_e("Código") ?></th>
+
+                <th><?php echo $def->label; ?> - <?php i::_e("Nome") ?></th>
                 
                 <th><?php echo $def->label; ?> - <?php i::_e("Área de Atuação") ?></th>
-                
-                <?php foreach($_properties as $prop): if($prop === 'name') continue; ?>
+                <?php $mdata = ($def->type == 1) ? $metas_individual : $metas_coletivo; ?>
+                <?php foreach($_properties as $prop): ?>
+                    <?php
+                        if($prop === 'name') continue;                        
+                        if (!in_array($prop,$mdata)) continue;
+                    ?>
                     <th><?php echo $def->label; ?> - <?php echo Agent::getPropertyLabel($prop); ?></th>
                 <?php endforeach; ?>
-            <?php endforeach; ?>
+            <?php endforeach;?>
         </tr>
     </thead>
     <tbody>
@@ -116,22 +139,25 @@ ksort($custom_fields);
                 foreach($r->_getDefinitionsWithAgents() as $def):
                     if($def->use == 'dontUse') continue;
                     $agent = $def->agent;
-                    $agentsData = $r->agentsData;
+                    $agentsData = $r->_getAgentsData();
+                    $mdata = ($def->type == 1) ? $metas_individual : $metas_coletivo;
                     $agentsDataGroup = [];
                     if(!empty($agent) && !empty($agentsData)){
-                        $agentsDataGroup = (isset($r->agentsData[$def->agentRelationGroupName])) ? $r->agentsData[$def->agentRelationGroupName] : [];
+                        $agentsDataGroup = (isset($agentsData[$def->agentRelationGroupName])) ? $agentsData[$def->agentRelationGroupName] : [];
                     }
                 ?>
 
                     <?php if($agent): ?>
-                        <td><a href="<?php echo $agent->singleUrl; ?>" target="_blank"><?php echo (isset($agentsDataGroup['name']))? $agentsDataGroup['name'] : 'Agente';?></a></td>
+                        <td><?php echo $agent->id;?></td>
+                        <td><a href="<?php echo $agent->singleUrl; ?>" target="_blank"><?php echo $agent->name;?></a></td>
                         
                         <td><?php echo implode(', ', $agent->terms['area']); ?></td>
 
-                        <?php
+                        <?php                        
                         foreach($_properties as $prop):
                             if($prop === 'name') continue;
-                            $val = isset($agentsDataGroup[$prop]) ? $agentsDataGroup[$prop] : '';
+                            if (!in_array($prop,$mdata)) continue;
+                            $val = $agent->$prop;                            
                         ?>
                         <td>
                             <?php
@@ -146,13 +172,19 @@ ksort($custom_fields);
 
                     <?php else: ?>
                         <?php 
-                            // total de propriedades + 1 coluna que corresponde a $agent->terms['area']
-                            echo str_repeat('<td></td>', count($_properties)+1) 
+                            echo str_repeat('<td></td>', 3);
+                            foreach($_properties as $prop) {
+                                if($prop === 'name') continue;
+                                if (!in_array($prop,$mdata)) continue;
+                                echo '<td></td>';           
+                            }                
                         ?>
                     <?php endif; ?>
 
-                <?php endforeach ?>
+                    <?php endforeach;  ?>
             </tr>
         <?php endforeach; ?>
     </tbody>
 </table>
+
+<?php $app->enableAccessControl(); ?>
